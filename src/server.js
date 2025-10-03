@@ -39,7 +39,7 @@ const app = express();
 // Trust proxy (if running behind a reverse proxy/load balancer)
 app.set('trust proxy', 1);
 // Disable X-Powered-By
-app.disable('x-powered-by');
+app.disable("x-powered-by");
 // Pretty-print JSON in non-production
 if (NODE_ENV !== 'production') {
   app.set('json spaces', 2);
