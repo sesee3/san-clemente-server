@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Data models for JSONDatabase: users and notes collections.
@@ -14,18 +14,19 @@
  * - ADMIN_NAME: display name for seeded admin user (default: "Admin")
  */
 
-const path = require('path');
-const { JSONDatabase } = require('./db');
-const { hashPassword, safeUser } = require('./auth');
-const z = require('zod');
+const path = require("path");
+const os = require("os");
+const { JSONDatabase } = require("./db");
+const { hashPassword, safeUser } = require("./auth");
+const z = require("zod");
 
 // Schemas
 
 const userSchema = z.object({
   id: z.string().uuid().optional(),
   email: z.string().email(),
-  name: z.string().min(1, 'Name is required'),
-  passwordHash: z.string().min(1, 'Password hash is required'),
+  name: z.string().min(1, "Name is required"),
+  passwordHash: z.string().min(1, "Password hash is required"),
   roles: z.array(z.string()).default([]).optional(),
   isActive: z.boolean().default(true).optional(),
   // Timestamps are assigned by the DB layer; keep them optional in the schema.
@@ -37,12 +38,48 @@ const userSchema = z.object({
 const noteSchema = z.object({
   id: z.string().uuid().optional(),
   userId: z.string().uuid(),
-  title: z.string().min(1, 'Title is required'),
-  content: z.string().default('').optional(),
+  title: z.string().min(1, "Title is required"),
+  content: z.string().default("").optional(),
   tags: z.array(z.string()).default([]).optional(),
   // Timestamps assigned by DB layer
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
+});
+
+const alertSchema = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string().min(1, "Title is required"),
+  message: z.string().min(1, "Message is required"),
+  date: z.string().optional(),
+  relevance: z.string().min(1, "Relevance is required"),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+});
+
+const eventSchema = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  date: z.string().min(1, "Date is required"),
+  isSaved: z.boolean(),
+  additionalNotes: z.array(z.string()).default([]).optional(),
+  endDate: z.string().optional(),
+  image: z.string().min(1, "Image (base64) is required"),
+  type: z.string().min(1, "Type is required"),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+});
+
+const alerts = db.collection("alerts", {
+  primaryKey: "id",
+  schema: alertSchema,
+  indexes: ["relevance", "date", "title"],
+});
+
+const events = db.collection("events", {
+  primaryKey: "id",
+  schema: eventSchema,
+  indexes: ["date", "type", "title", "isSaved"],
 });
 
 /**
@@ -62,26 +99,22 @@ function createModels(options = {}) {
   const dataDir =
     options.dataDir ||
     process.env.DATA_DIR ||
-    path.join(__dirname, '../../data');
+    (process.env.NODE_ENV === "production"
+      ? path.join(os.tmpdir(), "server-san-clemente-data")
+      : path.join(__dirname, "../../data"));
 
   const db = new JSONDatabase({ dataDir });
 
-  const users = db.collection('users', {
-    primaryKey: 'id',
+  const users = db.collection("users", {
+    primaryKey: "id",
     schema: userSchema,
-    indexes: [
-      { field: 'email', unique: true },
-      'isActive',
-    ],
+    indexes: [{ field: "email", unique: true }, "isActive"],
   });
 
-  const notes = db.collection('notes', {
-    primaryKey: 'id',
+  const notes = db.collection("notes", {
+    primaryKey: "id",
     schema: noteSchema,
-    indexes: [
-      'userId',
-      'title',
-    ],
+    indexes: ["userId", "title"],
   });
 
   // Seed an admin user if collection is empty and env is configured
@@ -92,27 +125,34 @@ function createModels(options = {}) {
       const passwordHash = await hashPassword(String(ADMIN_PASSWORD));
       await users.create({
         email: String(ADMIN_EMAIL).trim().toLowerCase(),
-        name: ADMIN_NAME ? String(ADMIN_NAME) : 'Admin',
+        name: ADMIN_NAME ? String(ADMIN_NAME) : "Admin",
         passwordHash,
-        roles: ['admin'],
+        roles: ["admin"],
         isActive: true,
       });
       // eslint-disable-next-line no-console
-      console.log('[models] Seeded admin user:', ADMIN_EMAIL);
+      console.log("[models] Seeded admin user:", ADMIN_EMAIL);
     }
   }
 
   const ready = seedAdminIfEmpty().catch((err) => {
     // eslint-disable-next-line no-console
-    console.error('[models] Admin seed failed:', err && err.message ? err.message : err);
+    console.error(
+      "[models] Admin seed failed:",
+      err && err.message ? err.message : err,
+    );
   });
 
   return {
     db,
     users,
     notes,
+    alerts,
+    events,
     userSchema,
     noteSchema,
+    alertSchema,
+    eventSchema,
     safeUser,
     ready,
   };
@@ -136,5 +176,7 @@ module.exports = {
   getModels,
   userSchema,
   noteSchema,
+  alertSchema,
+  eventSchema,
   safeUser,
 };
