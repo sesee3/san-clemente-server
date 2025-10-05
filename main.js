@@ -5,6 +5,8 @@ const helmet = require("helmet");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 
+const PORT = 3000;
+
 const app = express();
 app.use((req, res, next) => {
   req.is = uuidv4();
@@ -13,7 +15,7 @@ app.use((req, res, next) => {
 
 //TODO: Add security Middleware with Helmet
 
-app.get("/api/v1/health", (req, res) => {
+app.get("/v1/health", (req, res) => {
   res.json({
     ok: true,
   });
