@@ -1,32 +1,53 @@
-process.title = "server-san-clemente-main";
+require("dotenv").config();
 
-// Surface unhandled errors early with context.
-process.on("unhandledRejection", (reason, promise) => {
-  // eslint-disable-next-line no-console
-  console.error("[main] Unhandled Promise Rejection:", reason, { promise });
+const express = require("express");
+const helmet = require("helmet");
+const cors = require("cors");
+const { v4: uuidv4 } = require("uuid");
+
+const app = express();
+app.use((req, res, next) => {
+  req.is = uuidv4();
+  next();
 });
 
-process.on("uncaughtException", (err) => {
-  // eslint-disable-next-line no-console
-  console.error("[main] Uncaught Exception:", err);
+//TODO: Add security Middleware with Helmet
+
+app.get("/api/v1/health", (req, res) => {
+  res.json({
+    ok: true,
+  });
 });
 
-let server;
-try {
-  // src/server.js handles dotenv, middleware, routes, and graceful shutdown.
-  const { start } = require("./src/server");
-  if (typeof start !== "function") {
-    // eslint-disable-next-line no-console
-    console.error(
-      "[main] Failed to start: src/server.js does not export start()",
-    );
-    process.exit(1);
-  }
-  server = start();
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error("[main] Failed to bootstrap server:", err);
-  process.exit(1);
+function start() {
+  const server = app.listen(PORT, () => {
+    console.log("Server started");
+  });
+
+  server.setTimeout(12000);
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
+
+  const shutdown = (signal) => {
+    console.log("Grasfully shutting down server");
+    server.close((error) => {
+      if (error) {
+        console.error("Error in shutting down the server", error);
+        process.exit(1);
+      }
+      console.log("Closed out connections");
+      process.exit(0);
+    });
+
+    setTimeout(() => {
+      console.warn("Forcing shutdown after timout");
+      process.exit(1);
+    }, 10000).unref();
+  };
+  return server;
 }
 
-module.exports = server;
+module.exports = { app, start };
+if (require.main === module) {
+  start();
+}
