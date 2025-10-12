@@ -19,7 +19,7 @@ app.use(
   }),
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 //For middleware
@@ -81,6 +81,7 @@ app.use(errorHandler);
 app.use((req, res) => {
   res.status(404).json({
     message: "Invalid route",
+    route: req.originalUrl,
   });
 });
 
