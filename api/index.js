@@ -1,11 +1,11 @@
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import authRoutes from "./src/routes/authRoutes.js";
-import datas from "./src/routes/dataRouter.js";
-import { errorHandler } from "./src/middleware/errorHandler.js";
-import { verifyToken } from "./src/middleware/auth.js";
-import { reset, clearUsers, clearEvents } from "./src/config/init.database.js";
+import authRoutes from "../src/routes/authRoutes.js";
+import datas from "../src/routes/dataRouter.js";
+import { errorHandler } from "../src/middleware/errorHandler.js";
+import { verifyToken } from "../src/middleware/auth.js";
+import { reset, clearUsers, clearEvents } from "../src/config/init.database.js";
 
 const app = express();
 
