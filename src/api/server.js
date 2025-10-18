@@ -1,4 +1,4 @@
-import app from "./app.js";
+import app from "./index.js";
 import pool from "./config/database.config.js";
 import "dotenv/config";
 import { initializeDatabase } from "./config/init.database.js";
