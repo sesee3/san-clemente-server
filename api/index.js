@@ -11,15 +11,17 @@ const app = express();
 
 app.use(helmet());
 
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? process.env.ALLOWED_ORIGIN || "*"
-        : "http://localhost:3000",
-    credentials: true,
-  }),
-);
+// app.use(
+//   cors({
+//     origin:
+//       process.env.NODE_ENV === "production"
+//         ? process.env.ALLOWED_ORIGIN || "*"
+//         : "http://localhost:3000",
+//     credentials: true,
+//   }),
+// );
+//
+app.use(cors());
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
