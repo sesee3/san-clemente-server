@@ -1,12 +1,31 @@
-import pg from "pg";
-const { Pool } = pg;
 import "dotenv/config";
+import { MongoClient } from "mongodb";
 
-const pool = new Pool({});
+const uri =
+  "mongodb+srv://admin:Password444@sanclementedb.4xxrqvj.mongodb.net/?appName=mongosh+2.5.8";
+const client = new MongoClient(uri);
 
-pool.on("error", (error) => {
-  console.error("{POOL} error in PostgreSQL", error);
-  process.exit(-1);
-});
+async function connectToDatabase() {
+  try {
+    await client.connect();
+    console.log("Database connected");
+    await runDatabase();
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-export default pool;
+async function testPrintEvents() {
+  try {
+    const database = client.db("sanclementedb");
+    const events = database.collection("events");
+
+    const allEvents = await events.find({}).toArray();
+
+    return allEvents;
+  } catch (error) {
+    next(error);
+  }
+}
+
+export default testPrintEvents;

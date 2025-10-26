@@ -5,22 +5,14 @@ import authRoutes from "../src/routes/authRoutes.js";
 import datas from "../src/routes/dataRouter.js";
 import { errorHandler } from "../src/middleware/errorHandler.js";
 import { verifyToken } from "../src/middleware/auth.js";
-import { reset, clearUsers, clearEvents } from "../src/config/init.database.js";
+
+import testPrintEvents from "./config/database.config.js";
+
+import listFiles from "./config/gdrive.config.js";
 
 const app = express();
 
 app.use(helmet());
-
-// app.use(
-//   cors({
-//     origin:
-//       process.env.NODE_ENV === "production"
-//         ? process.env.ALLOWED_ORIGIN || "*"
-//         : "http://localhost:3000",
-//     credentials: true,
-//   }),
-// );
-//
 app.use(cors());
 
 app.use(express.json({ limit: "50mb" }));
@@ -51,12 +43,23 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/gdrive/test", (req, res) => {
+  try {
+    const test = listFiles();
+    res.status(200).json(test);
+  } catch (error) {
+    res.status(500).json({
+      error: error,
+    });
+  }
+});
+
 app.use("/v1/auth", authRoutes);
 app.use("/v1/data", datas);
 
 app.post("/v1/database/reset", verifyToken, async (req, res, next) => {
   try {
-    await reset();
+    // await reset();
     res.status(200).json({ ok: true, action: "reset" });
   } catch (err) {
     next(err);
@@ -64,7 +67,7 @@ app.post("/v1/database/reset", verifyToken, async (req, res, next) => {
 });
 app.post("/v1/database/clear_users", verifyToken, async (req, res, next) => {
   try {
-    await clearUsers();
+    // await clearUsers();
     res.status(200).json({ ok: true, action: "clear_users" });
   } catch (err) {
     next(err);
@@ -72,7 +75,7 @@ app.post("/v1/database/clear_users", verifyToken, async (req, res, next) => {
 });
 app.post("/v1/database/clear_events", verifyToken, async (req, res, next) => {
   try {
-    await clearEvents();
+    // await clearEvents();
     res.status(200).json({ ok: true, action: "clear_events" });
   } catch (err) {
     next(err);
