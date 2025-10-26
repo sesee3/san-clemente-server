@@ -4,8 +4,8 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/data/events", getEvents);
+router.get("/events", getEvents);
 
-router.post("/data/events/add", verifyToken, createEvent);
+router.post("/events/add", verifyToken, createEvent);
 
 export default router;
