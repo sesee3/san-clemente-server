@@ -8,15 +8,17 @@ const client = new MongoClient(uri);
 let db = null;
 
 export async function connectToDatabase() {
-  if (db) return db;
+    if (db) return db;
+
     try {
         await client.connect();
-        console.log("Database connected");
-        await runDatabase();
+        db = client.db("sanclementedb");
+        return db;
+
     } catch (error) {
-        console.error(error);
+        console.error("❌ Database connection error:", error);
+        throw error;
     }
 }
-
 
 
