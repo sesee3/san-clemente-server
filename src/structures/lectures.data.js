@@ -57,7 +57,9 @@ export const fetchLectures = async (req, res, next) => {
 };
 
 export const getLectureOfDate = async (req, res, next) => {
-    const { date } = req.params.date;
+    const { date } = req.params;
+
+    const collection = await data();
 
     try {
         const lectures = await collection.find({
@@ -71,14 +73,18 @@ export const getLectureOfDate = async (req, res, next) => {
 }
 
 export const fetchLectureOfDate = async(req, res, next) => {
-    const {date} = req.params.date ;
+    const {date} = req.params ;
+
+    console.log("Called with date: ", date);
+
+    const collection = await data();
 
     try {
 
         const lectureData = await getLectures(`https://www.chiesacattolica.it/liturgia-del-giorno/?data-liturgia=${date}`);
 
         const lectureBuild = {
-            date: todayString,
+            date: date,
             lecture: lectureData
         };
 
