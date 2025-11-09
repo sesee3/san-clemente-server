@@ -22,7 +22,7 @@ import {
 
 import {
     getTodayLectures,
-    fetchLectures, fetchLectureOfData
+    fetchLectures, fetchLectureOfDate, getLectureOfDate,
 } from "../structures/lectures.data.js";
 import {getGroups} from "../structures/groups.data.js";
 
