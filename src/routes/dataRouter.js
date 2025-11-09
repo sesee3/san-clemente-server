@@ -4,7 +4,7 @@ import {
   getEvents,
   updateEvent,
   deleteEvent,
-} from "../controllers/events.data.js";
+} from "../structures/events.data.js";
 import { verifyToken } from "../middleware/auth.js";
 
 import {
@@ -12,11 +12,23 @@ import {
     createCelebration,
     deleteCelebration,
     updateCelebration,
-} from "../controllers/celebration.data.js";
+} from "../structures/celebration.data.js";
+
+
+import {
+    getAlerts,
+    createAlert,
+} from "../structures/alerts.data.js";
+
+import fetchLectures, {
+    getTodayLectures,
+
+} from "../structures/lectures.data.js";
+import {getGroups} from "../structures/groups.data.js";
 
 export const router = express.Router();
 
-//EVEnts
+//Events
 router.get("/events", getEvents);
 router.post("/events/add", verifyToken, createEvent);
 router.put("/events/:id", verifyToken, updateEvent);
@@ -24,8 +36,25 @@ router.delete("/events/:id", verifyToken, deleteEvent);
 
 //Celebrations
 router.get("/celebrations", getCelebrations);
+
+//TODO: Add single celebration
+
 router.post("/celebrations/add", verifyToken, createCelebration);
 router.put("/celebrations/:id", verifyToken, updateCelebration);
 router.delete("/celebrations/:id", verifyToken, deleteCelebration);
 
 
+//Alerts
+router.get("/alerts", getAlerts);
+router.post("/alerts/add", verifyToken, createAlert);
+
+//Groups
+router.get("/groups", getGroups);
+router.post("/groups/add", verifyToken, createAlert);
+router.put("/groups/edit", verifyToken, createAlert);
+router.delete("/groups/delete", verifyToken, createAlert);
+
+
+//Lectures
+router.get("/lecture/today", getTodayLectures);
+router.get("/lecture/fetch/today", fetchLectures);

@@ -1,14 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 import { connectToDatabase as db} from "../config/database.config.js";
 
-// MongoDB connection setup (singleton pattern)
-
 async function getEventsCollection() {
   const database = await db();
   return database.collection("events");
 }
 
-// GET /events - Visualizza tutti gli eventi
+// GET
 export const getEvents = async (req, res, next) => {
   try {
     const eventsCollection = await getEventsCollection();
@@ -19,7 +17,7 @@ export const getEvents = async (req, res, next) => {
   }
 };
 
-// POST /events/add - Aggiungi un nuovo evento
+// ADD
 export const createEvent = async (req, res, next) => {
   try {
     const { title, description, date, additionalNotes, endDate, image, type } =
@@ -43,7 +41,7 @@ export const createEvent = async (req, res, next) => {
   }
 };
 
-// PUT /events/:id - Modifica un evento esistente
+// EDIT
 export const updateEvent = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -61,7 +59,7 @@ export const updateEvent = async (req, res, next) => {
   }
 };
 
-// DELETE /events/:id - Elimina un evento
+// DELETE
 export const deleteEvent = async (req, res, next) => {
   try {
     const { id } = req.params;

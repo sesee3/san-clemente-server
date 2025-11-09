@@ -1,12 +1,15 @@
 import app from "./index.js";
 import "dotenv/config";
 
+import {getLectures, getLecturesAsArray} from "./models/lecturesCaches.js";
+
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
   console.log(`✓ Server avviato su porta ${PORT}`);
   console.log(`✓ Ambiente: ${process.env.NODE_ENV || "development"}`);
   console.log("✓ Database connesso");
+
 });
 
 // Graceful shutdown
