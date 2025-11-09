@@ -30,7 +30,7 @@ export const getTodayLectures = async (req, res, next) => {
 };
 
 //TODO: Prevent to add multiple times the same lecture
-const fetchLectures = async (req, res, next) => {
+export const fetchLectures = async (req, res, next) => {
     try {
         const collection = await data();
 
@@ -55,7 +55,39 @@ const fetchLectures = async (req, res, next) => {
         next(error);
     }
 };
-export default fetchLectures
+
+export const getLectureOfDate = async (req, res, next) => {
+    const { date } = req.params.date;
+
+    try {
+        const lectures = await collection.find({
+            date: { $regex: `^${date}` }
+        }).toArray();
+
+        res.status(200).json(lectures);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const fetchLectureOfDate = async(req, res, next) => {
+    const {date} = req.params.date ;
+
+    try {
+
+        const lectureData = await getLectures(`https://www.chiesacattolica.it/liturgia-del-giorno/?data-liturgia=${date}`);
+
+        const lectureBuild = {
+            date: todayString,
+            lecture: lectureData
+        };
+
+        await collection.insertOne(lectureBuild);
+        res.status(200).json(lectureBuild);
+    } catch (error) {
+        next(error);
+    }
+}
 
 //2025/11/09
 //20251109
