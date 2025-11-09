@@ -20,9 +20,9 @@ import {
     createAlert,
 } from "../structures/alerts.data.js";
 
-import fetchLectures, {
+import {
     getTodayLectures,
-
+    fetchLectures, fetchLectureOfData
 } from "../structures/lectures.data.js";
 import {getGroups} from "../structures/groups.data.js";
 
@@ -58,3 +58,6 @@ router.delete("/groups/delete", verifyToken, createAlert);
 //Lectures
 router.get("/lecture/today", getTodayLectures);
 router.get("/lecture/fetch/today", fetchLectures);
+
+router.get("/lecture/:date", getLectureOfDate);
+router.get("/lecture/fetch/:date", fetchLectureOfDate);
