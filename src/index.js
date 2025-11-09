@@ -41,16 +41,16 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/gdrive/test", (req, res) => {
-  try {
-    const test = listFiles();
-    res.status(200).json(test);
-  } catch (error) {
-    res.status(500).json({
-      error: error,
-    });
-  }
-});
+// app.get("/gdrive/test", (req, res) => {
+//   try {
+//     const test = listFiles();
+//     res.status(200).json(test);
+//   } catch (error) {
+//     res.status(500).json({
+//       error: error,
+//     });
+//   }
+// });
 
 app.use("/v1/auth", authRoutes);
 app.use("/v1/data", dataRoutes);
