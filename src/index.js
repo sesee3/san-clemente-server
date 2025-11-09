@@ -6,7 +6,7 @@ import {router as dataRoutes} from "../src/routes/dataRouter.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyToken } from "./middleware/auth.js";
 
-import listFiles from "./config/gdrive.config.js";
+// import listFiles from "./config/gdrive.config.js";
 
 const app = express();
 
