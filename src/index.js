@@ -1,12 +1,12 @@
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import authRoutes from "../src/routes/authRoutes.js";
-import datas from "../src/routes/dataRouter.js";
+import {router as authRoutes} from "../src/routes/authRoutes.js";
+import {router as dataRoutes} from "../src/routes/dataRouter.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyToken } from "./middleware/auth.js";
 
-import { listFiles } from "./config/gdrive.config.js";
+import listFiles from "./config/gdrive.config.js";
 
 const app = express();
 
@@ -53,7 +53,7 @@ app.get("/gdrive/test", (req, res) => {
 });
 
 app.use("/v1/auth", authRoutes);
-app.use("/v1/data", datas);
+app.use("/v1/data", dataRoutes);
 
 app.post("/v1/database/reset", verifyToken, async (req, res, next) => {
   try {

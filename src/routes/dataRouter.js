@@ -14,7 +14,7 @@ import {
     updateCelebration,
 } from "../controllers/celebration.data.js";
 
-const router = express.Router();
+export const router = express.Router();
 
 //EVEnts
 router.get("/events", getEvents);
@@ -28,4 +28,4 @@ router.post("/celebrations/add", verifyToken, createCelebration);
 router.put("/celebrations/:id", verifyToken, updateCelebration);
 router.delete("/celebrations/:id", verifyToken, deleteCelebration);
 
-export default router;
+
