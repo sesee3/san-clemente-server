@@ -3,12 +3,10 @@ import helmet from "helmet";
 import cors from "cors";
 import authRoutes from "../src/routes/authRoutes.js";
 import datas from "../src/routes/dataRouter.js";
-import { errorHandler } from "../src/middleware/errorHandler.js";
-import { verifyToken } from "../src/middleware/auth.js";
+import { errorHandler } from "./middleware/errorHandler.js";
+import { verifyToken } from "./middleware/auth.js";
 
-import testPrintEvents from "./config/database.config.js";
-
-import listFiles from "./config/gdrive.config.js";
+import { listFiles } from "./config/gdrive.config.js";
 
 const app = express();
 

@@ -4,21 +4,28 @@ import {
   getEvents,
   updateEvent,
   deleteEvent,
-} from "../controllers/datasController.js";
+} from "../controllers/events.data.js";
 import { verifyToken } from "../middleware/auth.js";
+
+import {
+    getCelebrations,
+    createCelebration,
+    deleteCelebration,
+    updateCelebration,
+} from "../controllers/celebration.data.js";
 
 const router = express.Router();
 
-// Visualizza tutti gli eventi
+//EVEnts
 router.get("/events", getEvents);
-
-// Aggiungi un nuovo evento
 router.post("/events/add", verifyToken, createEvent);
-
-// Modifica un evento esistente
 router.put("/events/:id", verifyToken, updateEvent);
-
-// Elimina un evento
 router.delete("/events/:id", verifyToken, deleteEvent);
+
+//Celebrations
+router.get("/celebrations", getCelebrations);
+router.post("/celebrations/add", verifyToken, createCelebration);
+router.put("/celebrations/:id", verifyToken, updateCelebration);
+router.delete("/celebrations/:id", verifyToken, deleteCelebration);
 
 export default router;

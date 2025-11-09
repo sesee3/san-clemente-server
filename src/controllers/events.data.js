@@ -1,16 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
-import { MongoClient } from "mongodb";
+import { connectToDatabase as db} from "../config/database.config.js";
 
 // MongoDB connection setup (singleton pattern)
-const uri =
-  "mongodb+srv://admin:Password444@sanclementedb.4xxrqvj.mongodb.net/?appName=mongosh+2.5.8";
-const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 async function getEventsCollection() {
-  if (!client.topology || !client.topology.isConnected()) {
-    await client.connect();
-  }
-  const database = client.db("sanclementedb");
+  const database = await db();
   return database.collection("events");
 }
 

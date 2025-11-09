@@ -12,7 +12,7 @@ const auth = new google.auth.OAuth2(
   process.env.GDRIVE_REDIRECT_URI
 );
 
-async function listFiles() {
+export async function listFiles() {
 
   // Create a new Drive API client.
   const drive = google.drive({ version: "v3", auth });
@@ -33,7 +33,7 @@ async function listFiles() {
   });
 }
 
-async function addDriveDirectory(directoryName) {
+export async function addDriveDirectory(directoryName) {
   const drive = google.drive({ version: "v2", auth });
 
   const directoryMetadata = {
@@ -52,5 +52,3 @@ async function addDriveDirectory(directoryName) {
     return error;
   }
 }
-
-export default { listFiles, addDriveDirectory };
