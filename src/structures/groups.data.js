@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import {connectToDatabase as db} from "../config/database.config.js";
+import {ObjectId} from "mongodb";
 
 async function data() {
     const database = await db();
@@ -18,10 +19,9 @@ export const getGroups = async (req, res, next) => {
 
 export const createGroup = async (req, res, next) => {
     try {
-        const { name, description, informations, partecipants } = req.body;
-        const id = uuid();
+        const { id, name, description, informations, partecipants } = req.body;
         const group = {
-            id,
+            _id: new ObjectId(id),
             name,
             description,
             informations,
@@ -38,9 +38,14 @@ export const createGroup = async (req, res, next) => {
 export const updateGroup = async (req, res, next) => {
     try {
         const {id} = req.params;
-        const update = req.body;
+        const update = {
+            name: req.body.name,
+            description: req.body.description,
+            informations: req.body.informations,
+            partecipants: req.body.partecipants,
+        };
         const collection = await data();
-        const result = await collection.updateOne({id}, {$set: update});
+        const result = await collection.updateOne({_id: new ObjectId(id)}, {$set: update});
         if (result.matchedCount === 0) {
             return res.status(404).json({ok: false, message: 'Gruppo non trovato'});
         }
@@ -54,7 +59,7 @@ export const deleteGroup = async (req, res, next) => {
     try {
         const {id} = req.params;
         const collection = await data();
-        const result = await collection.deleteOne({id});
+        const result = await collection.deleteOne({_id: new ObjectId(id)});
         if (result.deletedCount === 0) {
             return res.status(404).json({ok: false, message: 'Gruppo non trovato'});
         }

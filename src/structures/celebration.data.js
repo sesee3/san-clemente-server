@@ -1,5 +1,6 @@
 import {v4 as uuid} from 'uuid';
 import {connectToDatabase as db} from "../config/database.config.js";
+import { ObjectId } from "mongodb";
 
 async function data() {
     const database = await db();
@@ -41,9 +42,12 @@ export const createCelebration = async (req, res, next) => {
 export const updateCelebration = async (req, res, next) => {
     try {
         const {id} = req.params;
-        const update = req.body;
+        const update = {
+            isSolemn: req.body.isSolemn,
+            hour: req.body.hour,
+        };
         const collection = await data();
-        const result = await collection.updateOne({id}, {$set: update});
+        const result = await collection.updateOne({_id: new ObjectId(id)}, {$set: update});
         if (result.matchedCount === 0) {
             return res.status(404).json({ok: false, message: 'Celebrazione non trovata'});
         }
@@ -58,23 +62,13 @@ export const deleteCelebration = async (req, res, next) => {
     try {
         const {id} = req.params;
         const collection = await data();
-        const result = await collection.deleteOne({id});
+        //Search for the property _id
+        const result = await collection.deleteOne({ _id: new ObjectId(id) });
         if (result.deletedCount === 0) {
-            return res.status(404).json({ok: false, message: 'Celebrazione non trovata'});
+            return res.status(404).json({ok: false, message: `Celebrazione non trovata con parametro: ${id}`});
         }
         res.status(200).json({ok: true, message: 'Celebrazione eliminata correttamente'});
     } catch (error) {
         next(error);
     }
 };
-
-// var id: String
-//
-//     var hour: String
-//
-//     var title: String?
-//     var description: String?
-//
-//     var lectures: [String]
-//
-//     var isSolemn: Bool

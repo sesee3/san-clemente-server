@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from "uuid";
 import { connectToDatabase as db} from "../config/database.config.js";
+import {ObjectId} from "mongodb";
 
-async function getEventsCollection() {
+async function data() {
   const database = await db();
   return database.collection("events");
 }
@@ -9,7 +9,7 @@ async function getEventsCollection() {
 // GET
 export const getEvents = async (req, res, next) => {
   try {
-    const eventsCollection = await getEventsCollection();
+    const eventsCollection = await data();
     const events = await eventsCollection.find({}).toArray();
     res.status(200).json(events);
   } catch (error) {
@@ -20,11 +20,10 @@ export const getEvents = async (req, res, next) => {
 // ADD
 export const createEvent = async (req, res, next) => {
   try {
-    const { title, description, date, additionalNotes, endDate, image, type } =
+    const { id, title, description, date, additionalNotes, endDate, image, type } =
       req.body;
-    const id = uuidv4();
     const event = {
-      id,
+        _id: new ObjectId(id),
       title,
       description,
       date,
@@ -33,7 +32,7 @@ export const createEvent = async (req, res, next) => {
       image,
       type,
     };
-    const eventsCollection = await getEventsCollection();
+    const eventsCollection = await data();
     await eventsCollection.insertOne(event);
     res.status(201).json({ ok: true, event });
   } catch (error) {
@@ -45,9 +44,17 @@ export const createEvent = async (req, res, next) => {
 export const updateEvent = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const update = req.body;
-    const eventsCollection = await getEventsCollection();
-    const result = await eventsCollection.updateOne({ id }, { $set: update });
+    const update = {
+        title: req.body.title,
+        description: req.body.description,
+        date: req.body.date,
+        additionalNotes: req.body.additionalNotes,
+        endDate: req.body.endDate,
+        image: req.body.image,
+        type: req.body.type,
+    };
+    const eventsCollection = await data();
+    const result = await eventsCollection.updateOne({ _id: new ObjectId(id) }, { $set: update });
     if (result.matchedCount === 0) {
       return res.status(404).json({ ok: false, message: "Evento non trovato" });
     }
@@ -62,15 +69,16 @@ export const updateEvent = async (req, res, next) => {
 // DELETE
 export const deleteEvent = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const eventsCollection = await getEventsCollection();
-    const result = await eventsCollection.deleteOne({ id });
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ ok: false, message: "Evento non trovato" });
-    }
-    res
-      .status(200)
-      .json({ ok: true, message: "Evento eliminato correttamente" });
+      const { id } = req.params;
+
+      console.log(id);
+
+      const collection = await data();
+      const result = await collection.deleteOne({_id: new ObjectId(id)});
+      if (result.deletedCount === 0) {
+          return res.status(404).json({ok: false, message: 'Evento non trovato'});
+      }
+      res.status(200).json({ok: true, message: 'Evento eliminato correttamente'});
   } catch (error) {
     next(error);
   }

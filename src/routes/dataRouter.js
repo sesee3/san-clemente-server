@@ -14,17 +14,16 @@ import {
     updateCelebration,
 } from "../structures/celebration.data.js";
 
-
-import {
-    getAlerts,
-    createAlert,
-} from "../structures/alerts.data.js";
-
 import {
     getTodayLectures,
     fetchLectures, fetchLectureOfDate, getLectureOfDate,
 } from "../structures/lectures.data.js";
-import {getGroups} from "../structures/groups.data.js";
+import {
+    getGroups,
+    createGroup,
+    updateGroup,
+    deleteGroup
+} from "../structures/groups.data.js";
 
 export const router = express.Router();
 
@@ -43,16 +42,11 @@ router.post("/celebrations/add", verifyToken, createCelebration);
 router.put("/celebrations/:id", verifyToken, updateCelebration);
 router.delete("/celebrations/:id", verifyToken, deleteCelebration);
 
-
-//Alerts
-router.get("/alerts", getAlerts);
-router.post("/alerts/add", verifyToken, createAlert);
-
 //Groups
 router.get("/groups", getGroups);
-router.post("/groups/add", verifyToken, createAlert);
-router.put("/groups/edit", verifyToken, createAlert);
-router.delete("/groups/delete", verifyToken, createAlert);
+router.post("/groups/add", verifyToken, createGroup);
+router.put("/groups/:id", verifyToken, updateGroup);
+router.delete("/groups/:id", verifyToken, deleteGroup);
 
 
 //Lectures

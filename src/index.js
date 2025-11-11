@@ -3,6 +3,7 @@ import helmet from "helmet";
 import cors from "cors";
 import {router as authRoutes} from "../src/routes/authRoutes.js";
 import {router as dataRoutes} from "../src/routes/dataRouter.js";
+import {router as alertsRoutes} from "../src/routes/alerts.router.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { verifyToken } from "./middleware/auth.js";
 
@@ -54,6 +55,7 @@ app.get("/", (req, res) => {
 
 app.use("/v1/auth", authRoutes);
 app.use("/v1/data", dataRoutes);
+app.use("/v1/alerts", alertsRoutes)
 
 app.post("/v1/database/reset", verifyToken, async (req, res, next) => {
   try {
